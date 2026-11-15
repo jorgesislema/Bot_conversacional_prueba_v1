@@ -23,9 +23,11 @@
   "error_precio": "El precio debe ser un número mayor o igual a cero.",
   "error_stock": "El stock debe ser un número entero mayor o igual a cero.",
   "error_horas": "La hora de cierre debe ser posterior a la de apertura.",
+  "error_filas": "Las filas no se pueden reordenar ni borrar desde aquí.",
   "placeholder_chat": "Escribe tu mensaje",
   "mensajes_restantes": "Mensajes restantes: {n}",
   "modo_sin_ia": "Modo sin IA: respuestas básicas.",
+  "texto_privacidad": "Esta demo usa datos ficticios. La conversación vive solo en tu sesión y se borra al cerrarla. Solo se comparte con el proveedor de IA lo necesario para responder. No escribas datos personales reales.",
   "saludo": [
     "Hola, en qué te puedo ayudar?",
     "Hola, dime en qué te ayudo.",
