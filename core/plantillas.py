@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import random
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,13 @@ from zoneinfo import ZoneInfo
 
 ZONA = ZoneInfo("Europe/Madrid")
 RAIZ = Path(__file__).resolve().parents[1]
+_PATRON_PALABRA = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
+
+
+def _primera_palabra(texto: str) -> str:
+    """Devuelve la primera palabra en minúsculas o vacío."""
+    hallados = _PATRON_PALABRA.findall(texto)
+    return hallados[0].lower() if hallados else ""
 
 
 def cargar_textos(idioma: str) -> dict[str, Any]:
@@ -55,6 +63,7 @@ def renderizar(
     textos: dict[str, Any] | None = None,
     evitar_indice: int = -1,
     rng: random.Random | None = None,
+    evitar_arranque: str = "",
 ) -> tuple[str, int]:
     """Rellena una plantilla con los datos de los hechos.
 
@@ -65,6 +74,7 @@ def renderizar(
         textos: diccionario i18n ya cargado (se carga si falta).
         evitar_indice: variante que no se debe repetir.
         rng: generador para elegir variante (por defecto, azar).
+        evitar_arranque: primera palabra que no debe repetirse.
     Devuelve: tupla con el texto y el índice de variante usado.
     Errores:
         KeyError si un hueco de la plantilla no está en datos.
@@ -76,6 +86,11 @@ def renderizar(
     if textos is None:
         textos = cargar_textos(idioma)
     opciones = variantes(tipo, textos)
+    primera = _primera_palabra(evitar_arranque)
+    if primera:
+        distintas = [v for v in opciones if _primera_palabra(v) != primera]
+        if distintas:
+            opciones = distintas
     candidatos = [i for i in range(len(opciones)) if i != evitar_indice]
     elegido = (rng or random).choice(candidatos) if candidatos else 0
     return opciones[elegido].format(**datos), elegido
@@ -122,6 +137,7 @@ def respaldo(
     textos: dict[str, Any] | None = None,
     evitar_indice: int = -1,
     rng: random.Random | None = None,
+    evitar_arranque: str = "",
 ) -> tuple[str, int]:
     """Genera la respuesta segura de respaldo para unos hechos.
 
@@ -134,6 +150,7 @@ def respaldo(
         textos: diccionario i18n ya cargado (se carga si falta).
         evitar_indice: variante que no se debe repetir.
         rng: generador para elegir variante.
+        evitar_arranque: primera palabra que no debe repetirse.
     Devuelve: tupla con el texto y el índice de variante usado.
     Ejemplo:
         >>> texto, _ = respaldo({"tipo_respuesta": "saludo", "idioma": "es",
@@ -148,18 +165,19 @@ def respaldo(
         textos = cargar_textos(idioma)
     if tipo == "derivar":
         primera, _ = renderizar("derivar_persona", idioma, datos, textos,
-                                evitar_indice, rng)
+                                evitar_indice, rng, evitar_arranque)
         segunda, _ = renderizar("derivar_demo", idioma, {}, textos,
                                 evitar_indice, rng)
         return f"{primera} {segunda}", 0
     if tipo == "stock":
         if datos.get("stock", 1) == 0 and "alternativa" in datos:
             primera, _ = renderizar("stock_cero", idioma, datos, textos,
-                                    evitar_indice, rng)
+                                    evitar_indice, rng, evitar_arranque)
             segunda, indice = renderizar("alternativa", idioma, datos, textos,
                                          evitar_indice, rng)
             return f"{primera} {segunda}", indice
         clave = "stock_pocas" if int(datos.get("stock", 99)) <= 3 else "stock_hay"
-        return renderizar(clave, idioma, datos, textos, evitar_indice, rng)
+        return renderizar(clave, idioma, datos, textos, evitar_indice, rng,
+                          evitar_arranque)
     return renderizar(_MAPA_TIPOS.get(tipo, tipo), idioma, datos, textos,
-                      evitar_indice, rng)
+                      evitar_indice, rng, evitar_arranque)
