@@ -322,8 +322,13 @@ def _resolver_producto(
             candidatos = buscar_productos(conn, texto, idioma)
     if not candidatos:
         return _hechos("no_se", estado)
+    texto = str(entendido.get("producto_texto", ""))
+    # Nombre exacto escrito por el cliente: gana sin discutir.
+    exactos = [c for c in candidatos
+               if _normalizar(_nombre_producto(c, idioma)) == _normalizar(texto)]
+    if exactos:
+        candidatos = exactos[:1]
     if len(candidatos) > 1:
-        texto = str(entendido.get("producto_texto", ""))
         palabras = set(_palabras(texto))
         # Palabra que solo aparece en un candidato: decide ("grande", "gato").
         distintivas = [
@@ -371,12 +376,12 @@ def _resolver_producto(
         return _hechos_stock(conn, estado, elegido, nombre, precio, stock, idioma)
     cantidad = int(entendido.get("cantidad", 0) or 0) or 1
     total = formatear_precio(int(elegido["precio_centimos"]) * cantidad, idioma)
+    estado.propuesta_pendiente = {
+        "tipo": "compra",
+        "producto_id": str(elegido["id"]),
+        "cantidad": str(cantidad),
+    }
     if stock >= cantidad:
-        estado.propuesta_pendiente = {
-            "tipo": "compra",
-            "producto_id": str(elegido["id"]),
-            "cantidad": str(cantidad),
-        }
         pregunta = "Quieres comprarlo?" if idioma == "es" else "Do you want to buy it?"
     else:
         pregunta = ""
@@ -430,16 +435,20 @@ def _resolver_comparar(
         return _hechos("no_se", estado)
     par = candidatos[:2]
     guardar_candidatos(estado, [int(c["id"]) for c in par])
-    partes = [
-        f"{_nombre_producto(c, idioma)}: {_descripcion_producto(c, idioma)}"
-        f" ({formatear_precio(int(c['precio_centimos']), idioma)})"
-        for c in par
-    ]
+    partes = []
+    precios = []
+    for c in par:
+        precio_txt = formatear_precio(int(c["precio_centimos"]), idioma)
+        precios.append(precio_txt)
+        descripcion = _descripcion_producto(c, idioma).rstrip(".")
+        partes.append(f"{_nombre_producto(c, idioma)}: {descripcion} ({precio_txt})")
+    descripcion_final = " ; ".join(partes)
     nombres = [_nombre_producto(c, idioma) for c in par]
-    permitido = nombres + re.findall(r"\d+", ". ".join(partes))
+    permitido = nombres + precios + re.findall(r"\d+", descripcion_final)
+    permitido = nombres + precios + re.findall(r"\d+", descripcion_final)
     return _hechos(
         "descripcion", estado,
-        {"producto": " y ".join(nombres), "descripcion": ". ".join(partes)},
+        {"producto": " y ".join(nombres), "descripcion": descripcion_final},
         permitido=permitido,
     )
 
