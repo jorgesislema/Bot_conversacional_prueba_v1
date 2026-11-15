@@ -1,0 +1,22 @@
+name: CI fase 0
+
+# Verifica en cada push y pull request que las pruebas pasan
+# y que core/ cumple el tipado estricto.
+on:
+  push:
+  pull_request:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instala dependencias de desarrollo
+        run: pip install -r requirements-dev.txt
+      - name: Ejecuta pytest
+        run: pytest
+      - name: Verifica tipado estricto en core
+        run: mypy --strict core/
