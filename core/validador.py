@@ -1,0 +1,104 @@
+"""Comprueba que la respuesta solo contiene datos de los hechos.
+
+Qué hace: aplica las 7 reglas de docs/05, sección 6, y devuelve los
+motivos de rechazo. Recibe: texto, hechos, arranque anterior y frases
+prohibidas. Devuelve: lista de motivos (vacía si es válida). Qué NO
+hace: no corrige ni reintenta; el flujo que llama decide el respaldo.
+"""
+
+from __future__ import annotations
+
+import re
+from typing import Any
+
+_PATRON_NUMERO = re.compile(r"\d+[,.]\d+|\d{1,2}:\d{2}|\b\d+\b")
+_PATRON_PRECIO = re.compile(r"\d+[,.]\d{2}")
+_PATRON_HORA = re.compile(r"\d{1,2}:\d{2}")
+_PATRON_FRASE = re.compile(r"[.!?]+")
+_PATRON_PALABRA = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
+
+# Mayúsculas de cortesía o inicio de pregunta que no son nombres propios.
+_EXCEPCIONES = {
+    "cuál", "cuáles", "qué", "cómo", "dónde", "cuándo", "cuánto",
+    "ese", "esa", "esos", "esas", "este", "esta", "estos", "estas",
+    "dra", "dr", "sr", "sra",
+    "what", "which", "this", "that", "these", "those", "how",
+}
+
+
+def _normalizar_numero(token: str) -> str:
+    """Unifica el separador decimal para comparar ES y EN."""
+    return token.replace(",", ".")
+
+
+def validar(
+    texto: str,
+    hechos: dict[str, Any],
+    arranque_anterior: str,
+    frases_prohibidas: list[str],
+) -> list[str]:
+    """Valida una respuesta redactada contra los hechos.
+
+    Parámetros:
+        texto: respuesta candidata.
+        hechos: diccionario con tipo_respuesta, datos y permitido_mencionar.
+        arranque_anterior: respuesta anterior del bot.
+        frases_prohibidas: lista i18n de frases que fingen ser persona.
+    Devuelve: lista de motivos; vacía cuando la respuesta es válida.
+    Ejemplo:
+        >>> hechos = {"tipo_respuesta": "precio", "datos": {},
+        ...     "permitido_mencionar": ["Pienso", "10,00 EUR"]}
+        >>> validar("Pienso: 10,00 EUR, IVA incluido.", hechos, "Hola.", [])
+        []
+    """
+    motivos: list[str] = []
+    permitido = " | ".join(str(p) for p in hechos.get("permitido_mencionar", []))
+    permitido_norm = _normalizar_numero(permitido.lower())
+    datos = hechos.get("datos", {})
+
+    for match in _PATRON_NUMERO.finditer(texto):
+        token = _normalizar_numero(match.group(0))
+        if token.lower() not in permitido_norm and token not in str(datos):
+            motivos.append(f"numero_no_permitido: {match.group(0)}")
+
+    for i, frase in enumerate(_PATRON_FRASE.split(texto)):
+        palabras = _PATRON_PALABRA.findall(frase)
+        for j, palabra in enumerate(palabras):
+            if j == 0:
+                continue  # El inicio de frase no es nombre propio.
+            bajo = palabra.lower()
+            if len(palabra) < 3 or palabra.isupper() or bajo in _EXCEPCIONES:
+                continue
+            if palabra[0].isupper() and bajo not in permitido.lower():
+                motivos.append(f"nombre_no_permitido: {palabra}")
+                break
+        if motivos and motivos[-1].startswith("nombre_no_permitido"):
+            break
+
+    sin_numeros = _PATRON_HORA.sub("", _PATRON_PRECIO.sub("", texto))
+    frases = [f for f in _PATRON_FRASE.split(sin_numeros) if f.strip()]
+    if "lista" not in datos and len(frases) > 3:
+        motivos.append("demasiadas_frases")
+    if len(texto) > 450:
+        motivos.append("demasiado_larga")
+
+    for letra in texto:
+        codigo = ord(letra)
+        if 0x1F300 <= codigo <= 0x1FAFF or 0x2600 <= codigo <= 0x27BF:
+            motivos.append("contiene_emoji")
+            break
+
+    texto_bajo = texto.lower()
+    for frase in frases_prohibidas:
+        if frase.lower() in texto_bajo:
+            motivos.append(f"finge_persona: {frase}")
+            break
+
+    if "!!" in texto:
+        motivos.append("exclamacion_doble")
+
+    actual = _PATRON_PALABRA.findall(texto)
+    anterior = _PATRON_PALABRA.findall(arranque_anterior)
+    if actual and anterior and actual[0].lower() == anterior[0].lower():
+        motivos.append("mismo_arranque")
+    return motivos
