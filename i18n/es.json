@@ -1,0 +1,144 @@
+{
+  "aviso_ia_inicio": "{saludo}, gracias por comunicarte con {negocio}. Soy {nombre_bot}, tu asistente virtual con inteligencia artificial. En qué te puedo ayudar?",
+  "aviso_ia_inicio_usted": "{saludo}, gracias por comunicarse con {negocio}. Soy {nombre_bot}, su asistente virtual con inteligencia artificial. En qué le puedo ayudar?",
+  "etiqueta_ia": "Asistente con IA",
+  "es_ia": "No, soy una inteligencia artificial, el asistente virtual de {negocio}. Si prefieres hablar con una persona, te indico cómo contactar con el equipo.",
+  "derivar_persona": "Claro. Puedes contactar con el equipo en el {telefono} o en el {correo}.",
+  "derivar_demo": "En un negocio real, aquí se te pasaría con una persona del equipo.",
+  "banner_demo": "Demo con datos ficticios. No escribas datos personales reales.",
+  "saludo_manana": "Buenos días",
+  "saludo_tarde": "Buenas tardes",
+  "saludo_noche": "Buenas noches",
+  "pie_titular": "Titular: {titular}. Contacto: {correo_titular}.",
+  "pie_privacidad": "Privacidad",
+  "idioma": "Idioma",
+  "boton_persona": "Hablar con una persona",
+  "boton_reset": "Restablecer demo",
+  "pestana_catalogo": "Catálogo",
+  "pestana_horarios": "Horarios",
+  "pestana_veterinarios": "Veterinarios",
+  "pestana_ventas": "Ventas",
+  "guardar": "Guardar cambios",
+  "cambio_aplicado": "Cambio aplicado. Prueba a preguntarle al asistente.",
+  "error_precio": "El precio debe ser un número mayor o igual a cero.",
+  "error_stock": "El stock debe ser un número entero mayor o igual a cero.",
+  "error_horas": "La hora de cierre debe ser posterior a la de apertura.",
+  "placeholder_chat": "Escribe tu mensaje",
+  "mensajes_restantes": "Mensajes restantes: {n}",
+  "modo_sin_ia": "Modo sin IA: respuestas básicas.",
+  "saludo": [
+    "Hola, en qué te puedo ayudar?",
+    "Hola, dime en qué te ayudo.",
+    "Hola, pregunta lo que necesites sobre productos, horarios o citas."
+  ],
+  "descripcion": [
+    "{producto}: {descripcion}",
+    "Te cuento: {producto}: {descripcion}",
+    "Sobre {producto}: {descripcion}"
+  ],
+  "precio": [
+    "{producto}: {precio}, IVA incluido.",
+    "Cuesta {precio}, IVA incluido, el producto {producto}.",
+    "El precio de {producto} es {precio}, IVA incluido."
+  ],
+  "stock_hay": [
+    "Hay {stock} disponibles.",
+    "Tenemos {stock} en stock.",
+    "Quedan {stock} unidades."
+  ],
+  "stock_pocas": [
+    "Quedan pocas unidades: {stock}.",
+    "Solo quedan {stock}, date prisa si lo quieres.",
+    "Aviso: quedan {stock} unidades."
+  ],
+  "stock_cero": [
+    "Ahora mismo no hay stock de {producto}.",
+    "Lo siento, {producto} está agotado.",
+    "De momento no tenemos {producto}."
+  ],
+  "alternativa": [
+    "Puedo ofrecerte {alternativa} a {precio}.",
+    "Como alternativa tienes {alternativa}, a {precio}.",
+    "Te puede servir {alternativa}, cuesta {precio}."
+  ],
+  "aclaracion": [
+    "Tengo varias opciones: {lista}. Cuál te interesa?",
+    "He encontrado esto: {lista}. Cuál quieres?",
+    "Hay varias coincidencias: {lista}. Dime cuál."
+  ],
+  "horario": [
+    "{dia}: de {apertura} a {cierre}.",
+    "Abrimos el {dia} de {apertura} a {cierre}.",
+    "El horario del {dia} es de {apertura} a {cierre}."
+  ],
+  "cerrado": [
+    "Ese día estamos cerrados. El siguiente día abierto es el {dia}.",
+    "Cerramos ese día. Te puedo atender el {dia}.",
+    "No abrimos ese día. El próximo día abierto es el {dia}."
+  ],
+  "oferta_cita": [
+    "Tengo libre el {dia} a las {hora} con {veterinario}. Te la reservo?",
+    "Hay hueco el {dia} a las {hora} con {veterinario}. Lo reservo?",
+    "Puedo darte cita el {dia} a las {hora} con {veterinario}. Te va bien?"
+  ],
+  "cita_confirmada": [
+    "Hecho. Cita para {servicio} el {dia} a las {hora} con {veterinario}.",
+    "Reservada tu cita de {servicio}: {dia} a las {hora} con {veterinario}.",
+    "Listo, te espero para {servicio} el {dia} a las {hora} con {veterinario}."
+  ],
+  "sin_hueco": [
+    "No tengo hueco en esa franja. Lo más cercano es el {dia} a las {hora}. Te va bien?",
+    "Esa franja está llena. Te puedo ofrecer el {dia} a las {hora}. Te sirve?",
+    "No queda sitio ahí. Lo más próximo es el {dia} a las {hora}. Lo reservo?"
+  ],
+  "compra_confirmada": [
+    "{producto} x{cantidad}: {total}, IVA incluido. Gracias por tu compra.",
+    "Hecho, {producto} x{cantidad} por {total}, IVA incluido. Gracias.",
+    "Listo: {producto} x{cantidad}, total {total} con IVA incluido."
+  ],
+  "urgencia": [
+    "Suena urgente: llama ahora a la clínica al {telefono} o a urgencias veterinarias.",
+    "No esperes: llama ya al {telefono} o a un servicio de urgencias veterinarias."
+  ],
+  "medico": [
+    "Eso lo tiene que valorar un veterinario. Puedo darte la ficha del producto o pasarte con el equipo.",
+    "No puedo valorar eso, lo debe ver un veterinario. Te doy la ficha o te paso con el equipo?",
+    "Esa decisión es de un veterinario. Puedo mostrarte la ficha del producto o derivarte."
+  ],
+  "rechazo_alcance": [
+    "De eso no te puedo ayudar. Puedo informarte de productos, precios, horarios y citas.",
+    "Eso se me escapa. Te ayudo con productos, precios, horarios o citas?",
+    "No puedo ayudarte con eso, pero sí con el catálogo, los horarios y las citas."
+  ],
+  "no_entendido": [
+    "No te he entendido bien. Puedes decirlo de otra forma?",
+    "Perdona, no te he entendido. Me lo dices de otra forma?",
+    "No sé si te he entendido. Prueba a preguntarlo de otra manera."
+  ],
+  "anulado": [
+    "De acuerdo, lo dejamos así. Dime si necesitas otra cosa.",
+    "Vale, no reservo nada. Aquí estoy para lo que necesites.",
+    "Entendido, lo dejamos. Pregúntame cuando quieras."
+  ],
+  "despedida": [
+    "Gracias por escribirnos. Que vaya muy bien.",
+    "Gracias por tu visita. Hasta pronto.",
+    "Un placer ayudarte. Hasta la próxima."
+  ],
+  "gracias": [
+    "De nada. Algo más en lo que te pueda ayudar?",
+    "De nada, para eso estoy. Necesitas algo más?",
+    "Un placer. Te ayudo en algo más?"
+  ],
+  "datos_personales": [
+    "Prefiero que no compartas datos personales por aquí. Puedo ayudarte sin ellos.",
+    "Mejor no compartas datos personales en el chat. Dime qué necesitas sin ellos.",
+    "Por privacidad, no escribas datos personales. Puedo ayudarte igual."
+  ],
+  "tope": [
+    "Se alcanzó el límite de mensajes de esta demo. El panel sigue disponible.",
+    "Llegamos al tope de mensajes de la demo. Puedes seguir usando el panel.",
+    "Se acabaron los mensajes de esta sesión. El panel sigue funcionando."
+  ],
+  "frases_prohibidas": ["como persona", "soy humano", "soy una persona", "yo también tengo", "en mi experiencia personal"]
+}

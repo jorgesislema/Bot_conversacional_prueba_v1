@@ -1,0 +1,145 @@
+{
+  "aviso_ia_inicio": "{saludo}, thank you for contacting {negocio}. I am {nombre_bot}, your virtual assistant, an artificial intelligence. How can I help you?",
+  "aviso_ia_inicio_usted": "{saludo}, thank you for contacting {negocio}. I am {nombre_bot}, your virtual assistant, an artificial intelligence. How can I help you?",
+  "etiqueta_ia": "AI assistant",
+  "es_ia": "No, I am an artificial intelligence, the virtual assistant of {negocio}. If you prefer to talk to a person, I can tell you how to contact the team.",
+  "derivar_persona": "Of course. You can contact the team at {telefono} or {correo}.",
+  "derivar_demo": "In a real business, you would now be handed over to a member of the team.",
+  "banner_demo": "Demo with fictional data. Do not write real personal data.",
+  "saludo_manana": "Good morning",
+  "saludo_tarde": "Good afternoon",
+  "saludo_noche": "Good evening",
+  "pie_titular": "Owner: {titular}. Contact: {correo_titular}.",
+  "pie_privacidad": "Privacy",
+  "idioma": "Language",
+  "boton_persona": "Talk to a person",
+  "boton_reset": "Reset demo",
+  "pestana_catalogo": "Catalogue",
+  "pestana_horarios": "Opening hours",
+  "pestana_veterinarios": "Vets",
+  "pestana_ventas": "Sales",
+  "guardar": "Save changes",
+  "cambio_aplicado": "Change applied. Try asking the assistant.",
+  "error_precio": "The price must be a number greater than or equal to zero.",
+  "error_stock": "Stock must be a whole number greater than or equal to zero.",
+  "error_horas": "Closing time must be later than opening time.",
+  "placeholder_chat": "Type your message",
+  "mensajes_restantes": "Messages left: {n}",
+  "modo_sin_ia": "No-AI mode: basic answers.",
+  "saludo": [
+    "Hello, how can I help you?",
+    "Hi, tell me how I can help.",
+    "Hello, ask me anything about products, hours or appointments."
+  ],
+  "descripcion": [
+    "{producto}: {descripcion}",
+    "Here you are: {producto}: {descripcion}",
+    "About {producto}: {descripcion}"
+  ],
+  "precio": [
+    "{producto}: {precio}, VAT included.",
+    "It costs {precio}, VAT included, the product {producto}.",
+    "The price of {producto} is {precio}, VAT included."
+  ],
+  "stock_hay": [
+    "There are {stock} available.",
+    "We have {stock} in stock.",
+    "There are {stock} units left."
+  ],
+  "stock_pocas": [
+    "Only a few left: {stock}.",
+    "Just {stock} left, hurry if you want it.",
+    "Heads up: {stock} units left."
+  ],
+  "stock_cero": [
+    "Right now {producto} is out of stock.",
+    "Sorry, {producto} is sold out.",
+    "We do not have {producto} at the moment."
+  ],
+  "alternativa": [
+    "I can offer you {alternativa} at {precio}.",
+    "As an alternative you have {alternativa}, at {precio}.",
+    "{alternativa} may suit you, it costs {precio}."
+  ],
+  "aclaracion": [
+    "I have several options: {lista}. Which one do you mean?",
+    "I found this: {lista}. Which one do you want?",
+    "There are several matches: {lista}. Tell me which one."
+  ],
+  "horario": [
+    "{dia}: {apertura} to {cierre}.",
+    "We open on {dia} from {apertura} to {cierre}.",
+    "Opening hours on {dia}: {apertura} to {cierre}."
+  ],
+  "cerrado": [
+    "We are closed that day. The next open day is {dia}.",
+    "We close that day. I can help you on {dia}.",
+    "We do not open that day. The next open day is {dia}."
+  ],
+  "oferta_cita": [
+    "I have a free slot on {dia} at {hora} with {veterinario}. Shall I book it?",
+    "There is room on {dia} at {hora} with {veterinario}. Shall I book it?",
+    "I can book you on {dia} at {hora} with {veterinario}. Does that suit you?"
+  ],
+  "cita_confirmada": [
+    "Done. Appointment for {servicio} on {dia} at {hora} with {veterinario}.",
+    "Your {servicio} appointment is booked: {dia} at {hora} with {veterinario}.",
+    "All set, see you for {servicio} on {dia} at {hora} with {veterinario}."
+  ],
+  "sin_hueco": [
+    "I have no room in that slot. The closest is on {dia} at {hora}. Does that suit you?",
+    "That slot is full. I can offer {dia} at {hora}. Does that work?",
+    "No room left there. The nearest is on {dia} at {hora}. Shall I book it?"
+  ],
+  "urgencia": [
+    "This may be an emergency. Call the clinic now at {telefono} or a veterinary emergency service.",
+    "This sounds urgent: call the clinic now at {telefono} or a veterinary emergency service.",
+    "Do not wait: call {telefono} now or a veterinary emergency service."
+  ],
+  "compra_confirmada": [
+    "{producto} x{cantidad}: {total}, VAT included. Thank you for your purchase.",
+    "Done, {producto} x{cantidad} for {total}, VAT included. Thank you.",
+    "All set: {producto} x{cantidad}, total {total} with VAT included."
+  ],
+  "medico": [
+    "A vet needs to assess that. I can give you the product sheet or put you through to the team.",
+    "I cannot assess that, a vet must see it. Shall I show the sheet or hand you over?",
+    "That decision belongs to a vet. I can show the product sheet or refer you."
+  ],
+  "rechazo_alcance": [
+    "I cannot help with that. I can give you product, price, hours and appointment info.",
+    "That is beyond me. Can I help with products, prices, hours or appointments?",
+    "I cannot help with that, but I can help with the catalogue, hours and appointments."
+  ],
+  "no_entendido": [
+    "I did not quite understand. Could you say it another way?",
+    "Sorry, I did not understand. Could you rephrase that?",
+    "I am not sure I understood. Try asking it another way."
+  ],
+  "anulado": [
+    "All right, we will leave it there. Let me know if you need anything else.",
+    "OK, I will not book anything. I am here if you need me.",
+    "Understood, leaving it. Ask me whenever you like."
+  ],
+  "despedida": [
+    "Thank you for writing to us. All the best.",
+    "Thanks for stopping by. See you soon.",
+    "A pleasure helping you. See you next time."
+  ],
+  "gracias": [
+    "You are welcome. Anything else I can help with?",
+    "You are welcome, that is what I am here for. Need anything else?",
+    "My pleasure. Can I help with anything else?"
+  ],
+  "datos_personales": [
+    "Please do not share personal data here. I can help you without it.",
+    "Better not to share personal data in the chat. Tell me what you need without it.",
+    "For privacy, do not write personal data. I can still help you."
+  ],
+  "tope": [
+    "The message limit for this demo has been reached. The panel is still available.",
+    "We reached the demo message cap. You can keep using the panel.",
+    "No messages left in this session. The panel still works."
+  ],
+  "frases_prohibidas": ["as a human", "i am human", "i am a person", "in my personal experience"]
+}
