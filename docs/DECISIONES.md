@@ -16,6 +16,7 @@ Registro de decisiones. Añadir una fila por decisión nueva o duda resuelta.
 | 2026-11-15 | Evals con entender simulado: verifican reglas, plantillas y validador; la eval con IA real espera claves | Sin claves no hay llamadas reales; los datos se verifican igual al 100 % | Cerrada |
 | 2026-11-15 | Nuevo módulo core/flujo.py que orquesta entender, reglas, redactar y validar | La tubería de 02.3 vive en un solo lugar probado sin interfaz | Cerrada |
 | 2026-11-15 | Claves i18n añadidas: compra_confirmada, error_filas, texto_privacidad | Completan flujos que 07 no detallaba; la paridad ES/EN se mantiene | Cerrada |
+| 2026-11-15 | Despliegue: todo listo en el repo (requirements, config, secretos de ejemplo, guía); publicar en share.streamlit.app lo hace el dueño con su cuenta | La URL pública exige la cuenta de GitHub del dueño | Abierta |
 | Pendiente | Claves del proveedor de IA principal y de respaldo | Elegir con los criterios de 06.6 y pegarlas en secretos | Abierta |
 | Pendiente | Titular legal y correo que aparecen en el pie | Los define el dueño del proyecto | Abierta |
 | Pendiente | Revisión de un abogado | Antes de ofrecerlo a clientes reales | Abierta |
