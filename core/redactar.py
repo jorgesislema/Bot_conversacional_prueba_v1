@@ -34,7 +34,7 @@ PLANTILLA_REDACTAR = (
 
 def redactar(
     proveedor: ProveedorIA, hechos: dict[str, Any], nombre_bot: str,
-    negocio: str, arranque_anterior: str,
+    negocio: str, arranque_anterior: str, correccion: str = "",
 ) -> str:
     """Pide a la IA el texto para los hechos dados.
 
@@ -44,6 +44,7 @@ def redactar(
         nombre_bot: nombre del asistente (Ana en la demo).
         negocio: nombre del negocio.
         arranque_anterior: respuesta anterior para no repetir el inicio.
+        correccion: motivos del validador para el reintento.
     Devuelve: texto candidato para el cliente.
     Ejemplo:
         >>> from core.proveedor_ia import ProveedorFalso
@@ -59,4 +60,6 @@ def redactar(
         arranque_anterior=arranque_anterior or "ninguna",
         hechos=hechos,
     )
+    if correccion:
+        prompt += f"\nCorrige: {correccion}. Responde solo con el texto corregido."
     return proveedor.generar_texto(prompt, 300, 0.6)
