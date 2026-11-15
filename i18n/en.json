@@ -23,9 +23,11 @@
   "error_precio": "The price must be a number greater than or equal to zero.",
   "error_stock": "Stock must be a whole number greater than or equal to zero.",
   "error_horas": "Closing time must be later than opening time.",
+  "error_filas": "Rows cannot be reordered or deleted from here.",
   "placeholder_chat": "Type your message",
   "mensajes_restantes": "Messages left: {n}",
   "modo_sin_ia": "No-AI mode: basic answers.",
+  "texto_privacidad": "This demo uses fictional data. The conversation lives only in your session and is deleted when it ends. Only what is needed to answer is shared with the AI provider. Do not write real personal data.",
   "saludo": [
     "Hello, how can I help you?",
     "Hi, tell me how I can help.",
