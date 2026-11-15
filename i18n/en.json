@@ -96,6 +96,11 @@
     "This sounds urgent: call the clinic now at {telefono} or a veterinary emergency service.",
     "Do not wait: call {telefono} now or a veterinary emergency service."
   ],
+  "compra_confirmada": [
+    "{producto} x{cantidad}: {total}, VAT included. Thank you for your purchase.",
+    "Done, {producto} x{cantidad} for {total}, VAT included. Thank you.",
+    "All set: {producto} x{cantidad}, total {total} with VAT included."
+  ],
   "medico": [
     "A vet needs to assess that. I can give you the product sheet or put you through to the team.",
     "I cannot assess that, a vet must see it. Shall I show the sheet or hand you over?",

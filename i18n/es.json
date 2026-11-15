@@ -91,8 +91,12 @@
     "Esa franja está llena. Te puedo ofrecer el {dia} a las {hora}. Te sirve?",
     "No queda sitio ahí. Lo más próximo es el {dia} a las {hora}. Lo reservo?"
   ],
+  "compra_confirmada": [
+    "{producto} x{cantidad}: {total}, IVA incluido. Gracias por tu compra.",
+    "Hecho, {producto} x{cantidad} por {total}, IVA incluido. Gracias.",
+    "Listo: {producto} x{cantidad}, total {total} con IVA incluido."
+  ],
   "urgencia": [
-    "Esto puede ser una urgencia. Llama ya a la clínica al {telefono} o a un servicio de urgencias veterinarias.",
     "Suena urgente: llama ahora a la clínica al {telefono} o a urgencias veterinarias.",
     "No esperes: llama ya al {telefono} o a un servicio de urgencias veterinarias."
   ],

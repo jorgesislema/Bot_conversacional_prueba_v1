@@ -172,6 +172,49 @@ def huecos_disponibles(
     return huecos
 
 
+def huecos_negocio(
+    conn: sqlite3.Connection, dia: date, duracion_min: int, ahora: datetime
+) -> list[Hueco]:
+    """Calcula huecos dentro del horario del negocio, sin veterinario.
+
+    Por qué existe: la peluquería se atiende en horario del negocio sin
+    veterinario asignado (ver 04, servicios).
+    """
+    ahora_local = _ahora_local(ahora)
+    if dia < ahora_local.date() or not dia_abierto(conn, dia):
+        return []
+    negocio = conn.execute(
+        "SELECT hora_apertura, hora_cierre FROM horarios_negocio WHERE dia_semana = ?",
+        (dia.weekday(),),
+    ).fetchone()
+    if negocio is None:
+        return []
+    especial = conn.execute(
+        "SELECT hora_apertura, hora_cierre FROM dias_especiales"
+        " WHERE fecha = ? AND cerrado = 0",
+        (dia.isoformat(),),
+    ).fetchone()
+    apertura = especial["hora_apertura"] if especial else negocio["hora_apertura"]
+    cierre = especial["hora_cierre"] if especial else negocio["hora_cierre"]
+    citas = conn.execute(
+        "SELECT inicio, fin FROM citas WHERE veterinario_id IS NULL"
+        " AND substr(inicio, 1, 10) = ?",
+        (dia.isoformat(),),
+    ).fetchall()
+    huecos: list[Hueco] = []
+    minuto = _a_minutos(str(apertura))
+    tope = _a_minutos(str(cierre)) - duracion_min
+    if minuto % PASO_MINUTOS:
+        minuto += PASO_MINUTOS - (minuto % PASO_MINUTOS)
+    while minuto <= tope:
+        inicio = datetime(dia.year, dia.month, dia.day, minuto // 60, minuto % 60)
+        fin_hueco = inicio + timedelta(minutes=duracion_min)
+        if inicio >= ahora_local and not _solapa(citas, inicio, fin_hueco):
+            huecos.append(Hueco(inicio, fin_hueco, 0))
+        minuto += PASO_MINUTOS
+    return huecos
+
+
 def _solapa(
     citas: list[sqlite3.Row], inicio: datetime, fin: datetime
 ) -> bool:

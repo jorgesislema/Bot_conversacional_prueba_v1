@@ -14,6 +14,7 @@ from typing import Any
 _PATRON_NUMERO = re.compile(r"\d+[,.]\d+|\d{1,2}:\d{2}|\b\d+\b")
 _PATRON_PRECIO = re.compile(r"\d+[,.]\d{2}")
 _PATRON_HORA = re.compile(r"\d{1,2}:\d{2}")
+_PATRON_CORREO = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
 _PATRON_FRASE = re.compile(r"[.!?]+")
 _PATRON_PALABRA = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
 
@@ -61,11 +62,17 @@ def validar(
         if token.lower() not in permitido_norm and token not in str(datos):
             motivos.append(f"numero_no_permitido: {match.group(0)}")
 
-    for i, frase in enumerate(_PATRON_FRASE.split(texto)):
-        palabras = _PATRON_PALABRA.findall(frase)
-        for j, palabra in enumerate(palabras):
-            if j == 0:
+    for frase in _PATRON_FRASE.split(texto):
+        limpia = frase.lstrip()
+        for match in _PATRON_PALABRA.finditer(limpia):
+            palabra = match.group(0)
+            inicio = match.start()
+            if inicio == 0:
                 continue  # El inicio de frase no es nombre propio.
+            # Tras dos puntos empieza una cita de un dato ("Sobre X: Alimento...").
+            anterior = limpia[:inicio].rstrip()
+            if anterior.endswith(":"):
+                continue
             bajo = palabra.lower()
             if len(palabra) < 3 or palabra.isupper() or bajo in _EXCEPCIONES:
                 continue
@@ -76,6 +83,8 @@ def validar(
             break
 
     sin_numeros = _PATRON_HORA.sub("", _PATRON_PRECIO.sub("", texto))
+    # El punto del correo no separa frases.
+    sin_numeros = _PATRON_CORREO.sub("correo", sin_numeros)
     frases = [f for f in _PATRON_FRASE.split(sin_numeros) if f.strip()]
     if "lista" not in datos and len(frases) > 3:
         motivos.append("demasiadas_frases")
