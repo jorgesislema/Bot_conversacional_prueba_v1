@@ -1,0 +1,4 @@
+# Dependencias solo para desarrollo y CI. No se despliegan en Streamlit Cloud.
+-r requirements.txt
+pytest==9.1.1
+mypy==1.14.0
