@@ -1,0 +1,21 @@
+# Binarios y cachés de Python
+__pycache__/
+*.py[cod]
+
+# Entornos y secretos locales (las claves viven en st.secrets, nunca en Git)
+.env
+.venv/
+.streamlit/secrets.toml
+
+# Bases de datos locales de prueba
+*.db
+*.sqlite3
+
+# Herramientas y sistema
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.vscode/
+.idea/
+.DS_Store
