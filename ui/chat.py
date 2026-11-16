@@ -1,26 +1,75 @@
-"""Historial del chat en Streamlit.
+"""Chat en forma de teléfono con burbujas tipo mensajería.
 
-Qué hace: dibuja los mensajes guardados en la sesión. Recibe: la lista
-de mensajes con rol y contenido. Devuelve: nada, dibuja en pantalla.
-Qué NO hace: no llama al motor (eso lo hace app.py con core/flujo.py).
+Qué hace: convierte el historial de la sesión en HTML seguro (todo texto
+se escapa) con burbujas del bot a la izquierda y del cliente a la
+derecha, más la barra superior con el nombre del asistente y la etiqueta
+de IA. Recibe: la lista de mensajes y los textos de la cabecera.
+Devuelve: HTML como texto (funciones puras, fáciles de probar).
+Qué NO hace: no llama al motor (eso lo hace app.py con core/flujo.py) y
+nunca inserta HTML escrito por el usuario sin escapar.
 """
 
 from __future__ import annotations
 
+import html
 from typing import Any
 
-import streamlit as st
+
+def _texto_seguro(texto: str) -> str:
+    """Escapa el texto y conserva los saltos de línea como <br>.
+
+    Por qué escapar: el mensaje del cliente se pinta con HTML; sin
+    escapar, alguien podría inyectar etiquetas o scripts.
+
+    Ejemplo:
+        >>> _texto_seguro("<b>hola</b>\\nadios")
+        '&lt;b&gt;hola&lt;/b&gt;<br>adios'
+    """
+    return html.escape(texto).replace("\n", "<br>")
 
 
-def mostrar_historial(mensajes: list[dict[str, Any]]) -> None:
-    """Dibuja cada mensaje con el rol que le toca.
+def html_barra(nombre_bot: str, estado: str, etiqueta_ia: str) -> str:
+    """Barra superior del teléfono: avatar, nombre, estado y etiqueta IA.
+
+    La etiqueta de IA es fija y visible siempre (Ley de IA, art. 50).
+
+    Ejemplo:
+        >>> "Asistente con IA" in html_barra("Ana", "en línea", "Asistente con IA")
+        True
+    """
+    inicial = html.escape(nombre_bot[:1].upper() or "A")
+    return (
+        '<div class="mf-tel-barra">'
+        f'<div class="mf-avatar">{inicial}</div>'
+        f'<div><div class="mf-tel-nombre">{html.escape(nombre_bot)}</div>'
+        f'<div class="mf-tel-estado">{html.escape(estado)}</div></div>'
+        f'<div class="mf-tel-ia">{html.escape(etiqueta_ia)}</div>'
+        "</div>"
+    )
+
+
+def html_conversacion(mensajes: list[dict[str, Any]], etiqueta_fecha: str) -> str:
+    """Zona de mensajes con burbujas y hora.
 
     Parámetros:
-        mensajes: lista de {"rol": "usuario"|"asistente", "texto": ...}.
+        mensajes: lista de {"rol": "usuario"|"asistente", "texto", "hora"?}.
+        etiqueta_fecha: texto de la pastilla superior ("Hoy").
+    Devuelve: HTML de la conversación.
     Ejemplo:
-        >>> mostrar_historial([])  # doctest: +SKIP
-        No dibuja nada sin mensajes.
+        >>> "mf-cliente" in html_conversacion([{"rol": "usuario", "texto": "hola"}], "Hoy")
+        True
     """
+    # Contenedor externo en columna invertida: así la barra de desplazamiento
+    # arranca abajo y el último mensaje siempre queda a la vista.
+    partes = ['<div class="mf-tel-chat"><div class="mf-tel-lista">',
+              f'<div class="mf-fecha">{html.escape(etiqueta_fecha)}</div>']
     for mensaje in mensajes:
-        with st.chat_message(mensaje["rol"]):
-            st.write(mensaje["texto"])
+        clase = "mf-cliente" if mensaje.get("rol") == "usuario" else "mf-bot"
+        hora = html.escape(str(mensaje.get("hora", "")))
+        pie = f'<span class="mf-hora">{hora}</span>' if hora else ""
+        partes.append(
+            f'<div class="mf-burbuja {clase}">'
+            f'{_texto_seguro(str(mensaje.get("texto", "")))}{pie}</div>'
+        )
+    partes.append("</div></div>")
+    return "".join(partes)
