@@ -1,6 +1,10 @@
 [theme]
-# Tema claro para la demo pública.
+# Tema claro con los colores de marca de Mascota Feliz (ver ui/estilo.py).
 base = "light"
+primaryColor = "#1F7A6D"
+backgroundColor = "#F6F8F7"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1C2B28"
 
 [browser]
 # Sin estadísticas de uso: la demo no usa cookies de seguimiento.
