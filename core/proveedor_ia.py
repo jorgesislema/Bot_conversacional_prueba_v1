@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import time
+import urllib.error
 import urllib.request
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -81,9 +82,13 @@ class ProveedorHTTP(ProveedorIA):
         datos = json.dumps(cuerpo).encode("utf-8")
         ultimo_error = ""
         for _ in range(2):
+            # Por qué User-Agent propio: varios proveedores están detrás de
+            # cortafuegos que bloquean con 403 el agente "Python-urllib".
             peticion = urllib.request.Request(
                 self._url, data=datos,
                 headers={"Content-Type": "application/json",
+                         "Accept": "application/json",
+                         "User-Agent": "MascotaFelizDemo/1.0",
                          "Authorization": "Bearer " + self._clave},
                 method="POST",
             )
@@ -93,7 +98,20 @@ class ProveedorHTTP(ProveedorIA):
                     cuerpo_resp: dict[str, object] = json.loads(
                         respuesta.read().decode("utf-8"))
                     return cuerpo_resp
-            except Exception as error:  # Red, tiempo o HTTP: se reintenta una vez.
+            except urllib.error.HTTPError as error:
+                # Se guarda un trozo del cuerpo de error del proveedor para
+                # diagnosticar (clave incorrecta, saldo, modelo). Nunca
+                # contiene la clave ni el texto del usuario.
+                try:
+                    detalle = error.read().decode("utf-8", "replace")[:300]
+                except Exception:
+                    detalle = ""
+                ultimo_error = f"HTTP {error.code} en {self._url}: {detalle}"
+                if error.code in (400, 401, 402, 403, 404):
+                    # Errores de configuración: reintentar no sirve.
+                    break
+                time.sleep(0.5)
+            except Exception as error:  # Red o tiempo: se reintenta una vez.
                 ultimo_error = str(error)
                 time.sleep(0.5)
         raise ErrorProveedor(f"sin respuesta del proveedor: {ultimo_error}")
