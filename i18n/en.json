@@ -59,6 +59,10 @@
   "error_nombre": "The name must be 3 to 80 characters long.",
   "error_nombre_repetido": "A product with that name already exists.",
   "error_categoria": "Choose a category from the list.",
+  "ayuda_decimales": "You can type 12.50 or 12,50.",
+  "ejemplo_nombre": "e.g. Dental treat for cats",
+  "ejemplo_precio": "e.g. 6.20",
+  "ayuda_datos": "To add a product use the New product tab. Here you can edit cells and press Save changes.",
   "texto_privacidad": "This demo uses fictional data. The conversation lives only in your session and is deleted when it ends. Only what is needed to answer is shared with the AI provider. Do not write real personal data.",
   "saludo": [
     "Hello, how can I help you?",
@@ -66,9 +70,19 @@
     "Hello, ask me anything about products, hours or appointments."
   ],
   "descripcion": [
-    "{producto}: {descripcion}",
-    "Here you are: {producto}: {descripcion}",
-    "About {producto}: {descripcion}"
+    "{producto}, by {marca}: {descripcion} It costs {precio}, VAT included.",
+    "The {producto} is from {marca}. {descripcion} Price: {precio}, VAT included.",
+    "About the {producto} ({marca}): {descripcion} It is {precio}, VAT included."
+  ],
+  "comparacion": [
+    "{descripcion}",
+    "Here is the comparison: {descripcion}",
+    "Side by side: {descripcion}"
+  ],
+  "lista_productos": [
+    "Yes, we have these:\n{lista}\nAll prices include VAT. Which one would you like?",
+    "Of course. These are the options:\n{lista}\nPrices include VAT. Which one interests you?",
+    "We have {total} options. The main ones:\n{lista}\nVAT included. Which one do you want?"
   ],
   "precio": [
     "{producto}: {precio}, VAT included.",
@@ -76,14 +90,14 @@
     "The price of {producto} is {precio}, VAT included."
   ],
   "stock_hay": [
-    "There are {stock} available.",
-    "We have {stock} in stock.",
-    "There are {stock} units left."
+    "Yes, we have the {producto} by {marca} at {precio}, VAT included. Would you like it?",
+    "We do: {producto} ({marca}), {precio} VAT included. Shall I reserve one for you?",
+    "Yes, it is available. {producto} by {marca}: {precio}, VAT included."
   ],
   "stock_pocas": [
-    "Only a few left: {stock}.",
-    "Just {stock} left, hurry if you want it.",
-    "Heads up: {stock} units left."
+    "Yes, we have the {producto} at {precio}, VAT included, but only {stock} left.",
+    "There are only {stock} left of the {producto} ({marca}), at {precio} VAT included.",
+    "{producto}: {precio}, VAT included. Heads up: only {stock} units left."
   ],
   "stock_cero": [
     "Right now {producto} is out of stock.",

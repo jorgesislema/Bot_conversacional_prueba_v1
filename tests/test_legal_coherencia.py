@@ -74,14 +74,28 @@ def _casos() -> list[dict]:
         {"tipo_respuesta": "precio", "idioma": "es", "datos":
             {"producto": "Pienso perro adulto 15 kg", "precio": "49,90 EUR"},
          "permitido_mencionar": ["Pienso perro adulto 15 kg", "49,90 EUR"]},
+        # Desde la conversación tipo vendedor, descripción y stock llevan
+        # también marca y precio.
         {"tipo_respuesta": "descripcion", "idioma": "es", "datos":
             {"producto": "Pienso perro adulto 15 kg",
-             "descripcion": "Alimento completo con pollo y arroz."},
-         "permitido_mencionar": ["Pienso perro adulto 15 kg"]},
+             "descripcion": "Alimento completo con pollo y arroz.",
+             "marca": "Campo Verde", "precio": "49,90 EUR", "stock": 12},
+         "permitido_mencionar": ["Pienso perro adulto 15 kg", "Campo Verde",
+                                 "49,90 EUR"]},
         {"tipo_respuesta": "stock", "idioma": "es", "datos":
-            {"producto": "Collar", "stock": 25}, "permitido_mencionar": ["Collar", "25"]},
+            {"producto": "Collar", "stock": 25, "marca": "Paseo", "precio": "7,90 EUR"},
+         "permitido_mencionar": ["Collar", "25", "Paseo", "7,90 EUR"]},
         {"tipo_respuesta": "stock", "idioma": "es", "datos":
-            {"producto": "Collar", "stock": 2}, "permitido_mencionar": ["Collar", "2"]},
+            {"producto": "Collar", "stock": 2, "marca": "Paseo", "precio": "8,90 EUR"},
+         "permitido_mencionar": ["Collar", "2", "Paseo", "8,90 EUR"]},
+        {"tipo_respuesta": "lista_productos", "idioma": "es", "datos":
+            {"lista": "- Pienso A, Campo Verde: 14,50 EUR\n- Pienso B, Campo Verde: 49,90 EUR",
+             "cantidad": 2, "total": 2},
+         "permitido_mencionar": ["Pienso A", "Campo Verde", "14,50 EUR", "Pienso B",
+                                 "49,90 EUR"]},
+        {"tipo_respuesta": "comparacion", "idioma": "es", "datos":
+            {"producto": "A y B", "descripcion": "A: uno (1,00 EUR) ; B: dos (2,00 EUR)"},
+         "permitido_mencionar": ["A", "B", "1,00 EUR", "2,00 EUR"]},
         {"tipo_respuesta": "stock", "idioma": "es", "datos":
             {"producto": "Pienso", "stock": 0, "alternativa": "Otro pienso",
              "precio": "10,00 EUR"},

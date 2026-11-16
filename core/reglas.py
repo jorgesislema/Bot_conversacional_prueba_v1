@@ -74,6 +74,116 @@ def _detalles(texto: str) -> set[str]:
     return {d.strip() for d in detalles if d.strip()}
 
 
+# Palabras con que el cliente nombra una categoría entera ("comida para
+# perros"). Si solo dice eso, el bot muestra la lista de esa categoría en
+# vez de adivinar un producto (fallo visto en producción: "comida para
+# cachorros" devolvía las latas de gato).
+_SINONIMOS_CATEGORIA = {
+    "alimentación": ("comida", "alimento", "pienso", "croqueta", "comer",
+                     "food", "kibble", "lata", "humedo"),
+    "snacks": ("snack", "golosina", "premio", "chuche", "treat", "chew"),
+    "salud": ("antiparasitario", "pipeta", "antipulga", "pulga", "garrapata",
+              "flea", "tick"),
+    "higiene": ("higiene", "aseo", "shampoo", "hygiene"),
+    # "arn" es "arnés" tras quitar acento y la terminación "es" en _palabras.
+    "accesorios": ("accesorio", "collar", "correa", "arn", "accessory",
+                   "leash", "harness"),
+    "juguetes": ("juguete", "jugar", "pelota", "rascador", "toy", "ball"),
+}
+
+# Especie que se busca en el nombre del producto. "perro" incluye a los
+# cachorros porque el pienso de cachorro es para perros.
+_ESPECIES = {
+    "perro": ("perro", "cachorro", "dog", "puppy"),
+    "cachorro": ("cachorro", "puppy"),
+    "gato": ("gato", "cat"),
+}
+_PALABRAS_ESPECIE = {
+    "perro": "perro", "perrito": "perro", "perra": "perro", "dog": "perro",
+    "cachorro": "cachorro", "cachorrito": "cachorro", "puppy": "cachorro",
+    "gato": "gato", "gatito": "gato", "gata": "gato", "cat": "gato",
+    "kitten": "gato",
+}
+
+# Palabras de relleno que no distinguen un producto de otro.
+_RELLENO = {
+    "para", "de", "del", "la", "el", "los", "las", "un", "una", "uno", "tiene",
+    "tienen", "teneis", "hay", "que", "mi", "su", "con", "y", "o", "algo",
+    "alguna", "alguno", "venden", "vende", "busco", "quiero", "precio",
+    "cuanto", "cuesta", "vale", "for", "the", "a", "an", "do", "you", "have",
+    "any", "my", "some", "want", "need", "buenas", "buenos", "hola", "dia",
+    "tarde", "noche", "por", "favor",
+}
+
+
+def _coincide(palabra: str, opciones: tuple[str, ...] | list[str]) -> bool:
+    """Indica si la palabra se parece a alguna opción (tolera faltas).
+
+    Ejemplo:
+        >>> _coincide("cachoro", ("cachorro",))
+        True
+    """
+    # Solo se toleran faltas en palabras de 5 letras o más: en las cortas
+    # ("pelo" frente a "pelota") el parecido engaña.
+    return any(palabra == o or (len(palabra) >= 5 and fuzz.ratio(palabra, o) >= 80)
+               for o in opciones)
+
+
+def interpretar_categoria(texto: str) -> tuple[str, str, list[str]]:
+    """Detecta categoría, especie y palabras sobrantes en el texto.
+
+    Parámetros:
+        texto: lo que escribió el cliente.
+    Devuelve: (categoria o "", especie o "", palabras que no son ni
+    categoría, ni especie, ni relleno). Si no sobra nada, la pregunta es
+    amplia y conviene mostrar una lista.
+    Ejemplo:
+        >>> interpretar_categoria("comida para cachoros")
+        ('alimentación', 'cachorro', [])
+    """
+    categoria = ""
+    especie = ""
+    sobrantes: list[str] = []
+    for palabra in _palabras(texto):
+        encontrada = next((c for c, sinonimos in _SINONIMOS_CATEGORIA.items()
+                           if _coincide(palabra, sinonimos)), "")
+        if encontrada:
+            categoria = categoria or encontrada
+            continue
+        clave = next((k for k in _PALABRAS_ESPECIE
+                      if _coincide(palabra, (k,))), "")
+        if clave:
+            # "cachorro" es más preciso que "perro": si aparecen ambos, gana.
+            nueva = _PALABRAS_ESPECIE[clave]
+            especie = nueva if especie in ("", "perro") else especie
+            continue
+        if palabra not in _RELLENO:
+            sobrantes.append(palabra)
+    return categoria, especie, sobrantes
+
+
+def productos_de_categoria(
+    conn: sqlite3.Connection, categoria: str, especie: str, idioma: str
+) -> list[dict[str, Any]]:
+    """Lista productos activos de una categoría, filtrados por especie.
+
+    Ejemplo:
+        >>> conn = __import__("core.esquema", fromlist=["iniciar_bd"]).iniciar_bd()
+        >>> [p["sku"] for p in productos_de_categoria(conn, "alimentación", "cachorro", "es")]
+        ['P003']
+    """
+    filas = [_fila_a_dict(f) for f in conn.execute(
+        "SELECT * FROM productos WHERE activo = 1 AND (? = '' OR categoria = ?)"
+        " ORDER BY stock > 0 DESC, precio_centimos",
+        (categoria, categoria)).fetchall()]
+    if not especie:
+        return filas
+    palabras_especie = _ESPECIES[especie]
+    return [f for f in filas
+            if any(_coincide(p, palabras_especie)
+                   for p in _palabras(f"{f['nombre_es']} {f['nombre_en']}"))]
+
+
 def _fila_a_dict(fila: sqlite3.Row) -> dict[str, Any]:
     """Convierte una fila SQLite en diccionario."""
     return {clave: fila[clave] for clave in fila.keys()}
@@ -318,8 +428,22 @@ def _resolver_producto(
                 "SELECT * FROM productos WHERE id = ?", (estado.producto_actual,)
             ).fetchone()
             candidatos = [_fila_a_dict(fila)] if fila else []
+        elif not texto.strip() and estado.candidatos and referencia == "ninguna":
+            # "que marca" tras una lista: se repite la lista con las marcas.
+            filas = [conn.execute("SELECT * FROM productos WHERE id = ?", (c,)).fetchone()
+                     for c in estado.candidatos]
+            return _hechos_lista(estado, [_fila_a_dict(f) for f in filas if f], 0)
         else:
-            candidatos = buscar_productos(conn, texto, idioma)
+            categoria, especie, sobrantes = interpretar_categoria(texto)
+            if (categoria or especie) and not sobrantes:
+                # Pregunta amplia ("comida para perros"): lista en vez de adivinar.
+                de_categoria = productos_de_categoria(conn, categoria, especie, idioma)
+                if len(de_categoria) > 1:
+                    return _hechos_lista(estado, de_categoria[:LISTA_MAXIMA],
+                                         len(de_categoria))
+                candidatos = de_categoria
+            if not candidatos:
+                candidatos = buscar_productos(conn, texto, idioma)
     if not candidatos:
         return _hechos("no_se", estado)
     texto = str(entendido.get("producto_texto", ""))
@@ -364,12 +488,16 @@ def _resolver_producto(
     nombre = _nombre_producto(elegido, idioma)
     precio = formatear_precio(int(elegido["precio_centimos"]), idioma)
     stock = int(elegido["stock"])
+    marca = str(elegido.get("marca", ""))
     if modo == "descripcion":
         descripcion = _descripcion_producto(elegido, idioma)
-        permitido = [nombre] + re.findall(r"\d+", descripcion)
+        # Marca y precio van siempre: "que marca" o "y cuanto vale" se
+        # responden con el mismo producto sin volver a preguntar.
+        permitido = [nombre, marca, precio] + re.findall(r"\d+", descripcion)
         return _hechos(
             "descripcion", estado,
-            {"producto": nombre, "descripcion": descripcion},
+            {"producto": nombre, "descripcion": descripcion, "marca": marca,
+             "precio": precio, "stock": stock},
             permitido=permitido,
         )
     if modo == "stock":
@@ -414,15 +542,53 @@ def _hechos_stock(
              "precio": precio_alt},
             permitido=[nombre, "0", nombre_alt, precio_alt],
         )
-    if stock <= 3:
-        return _hechos(
-            "stock", estado, {"producto": nombre, "stock": stock},
-            permitido=[nombre, str(stock)],
-        )
-    return _hechos(
-        "stock", estado, {"producto": nombre, "stock": stock},
-        permitido=[nombre, str(stock)],
-    )
+    # Con stock se responde como un vendedor: nombre, marca y precio. Las
+    # unidades solo se dicen si quedan pocas (plantilla stock_pocas).
+    marca = str(elegido.get("marca", ""))
+    datos = {"producto": nombre, "stock": stock, "precio": precio, "marca": marca}
+    pregunta = "Lo quieres?" if idioma == "es" else "Would you like it?"
+    return _hechos("stock", estado, datos, pregunta,
+                   permitido=[nombre, str(stock), precio, marca])
+
+
+# Máximo de productos en una lista: más de 4 líneas cansa en un chat.
+LISTA_MAXIMA = 4
+
+
+def _hechos_lista(
+    estado: Estado, productos: list[dict[str, Any]], total: int
+) -> dict[str, Any]:
+    """Arma una lista corta de productos con marca, precio y disponibilidad.
+
+    Guarda los ids como candidatos para entender después "el segundo",
+    "el grande" o "que marca".
+
+    Parámetros:
+        estado: memoria de la conversación.
+        productos: productos a mostrar (ya recortados).
+        total: cuántos hay en total en la categoría (0 si no aplica).
+    Devuelve: hechos de tipo lista_productos.
+    """
+    idioma = estado.idioma
+    if not productos:
+        return _hechos("no_se", estado)
+    guardar_candidatos(estado, [int(p["id"]) for p in productos])
+    estado.producto_actual = 0
+    agotado = "agotado" if idioma == "es" else "out of stock"
+    pocas = "quedan pocas" if idioma == "es" else "only a few left"
+    lineas = []
+    permitido: list[str] = []
+    for p in productos:
+        nombre = _nombre_producto(p, idioma)
+        precio = formatear_precio(int(p["precio_centimos"]), idioma)
+        stock = int(p["stock"])
+        aviso = f" ({agotado})" if stock <= 0 else f" ({pocas})" if stock <= 3 else ""
+        lineas.append(f"- {nombre}, {p['marca']}: {precio}{aviso}")
+        permitido += [nombre, str(p["marca"]), precio]
+    datos = {"lista": "\n".join(lineas), "cantidad": len(productos),
+             "total": max(total, len(productos))}
+    pregunta = "Cuál te interesa?" if idioma == "es" else "Which one would you like?"
+    return _hechos("lista_productos", estado, datos, pregunta, permitido)
 
 
 def _resolver_comparar(
@@ -447,7 +613,7 @@ def _resolver_comparar(
     permitido = nombres + precios + re.findall(r"\d+", descripcion_final)
     permitido = nombres + precios + re.findall(r"\d+", descripcion_final)
     return _hechos(
-        "descripcion", estado,
+        "comparacion", estado,
         {"producto": " y ".join(nombres), "descripcion": descripcion_final},
         permitido=permitido,
     )

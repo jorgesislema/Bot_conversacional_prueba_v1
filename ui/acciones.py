@@ -248,6 +248,20 @@ def productos_para_selector(conn: sqlite3.Connection, idioma: str) -> list[tuple
             for f in filas]
 
 
+def precio_actual(conn: sqlite3.Connection, producto_id: int, idioma: str = "es") -> str:
+    """Precio actual del producto sin moneda, listo para editar ("14,50").
+
+    Ejemplo:
+        >>> precio_actual(conn, 1)  # doctest: +SKIP
+        '14,50'
+    """
+    fila = conn.execute("SELECT precio_centimos FROM productos WHERE id = ?",
+                        (producto_id,)).fetchone()
+    if fila is None:
+        return ""
+    return formatear_euros(int(fila["precio_centimos"]), idioma).removesuffix(" EUR")
+
+
 def horario_de(conn: sqlite3.Connection, dia_semana: int) -> tuple[str, str] | None:
     """Devuelve (apertura, cierre) del día o None si está cerrado."""
     fila = conn.execute(

@@ -176,6 +176,9 @@ def respaldo(
             segunda, indice = renderizar("alternativa", idioma, datos, textos,
                                          evitar_indice, rng)
             return f"{primera} {segunda}", indice
+        if int(datos.get("stock", 1)) <= 0:
+            return renderizar("stock_cero", idioma, datos, textos, evitar_indice,
+                              rng, evitar_arranque)
         clave = "stock_pocas" if int(datos.get("stock", 99)) <= 3 else "stock_hay"
         return renderizar(clave, idioma, datos, textos, evitar_indice, rng,
                           evitar_arranque)

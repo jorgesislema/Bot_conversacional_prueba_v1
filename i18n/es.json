@@ -59,6 +59,10 @@
   "error_nombre": "El nombre debe tener entre 3 y 80 caracteres.",
   "error_nombre_repetido": "Ya existe un producto con ese nombre.",
   "error_categoria": "Elige una categoría de la lista.",
+  "ayuda_decimales": "Puedes escribir 12,50 o 12.50.",
+  "ejemplo_nombre": "Ej.: Snack dental para gatos",
+  "ejemplo_precio": "Ej.: 6,20",
+  "ayuda_datos": "Para añadir un producto usa la pestaña Producto nuevo. Aquí puedes editar celdas y pulsar Guardar cambios.",
   "texto_privacidad": "Esta demo usa datos ficticios. La conversación vive solo en tu sesión y se borra al cerrarla. Solo se comparte con el proveedor de IA lo necesario para responder. No escribas datos personales reales.",
   "saludo": [
     "Hola, en qué te puedo ayudar?",
@@ -66,9 +70,19 @@
     "Hola, pregunta lo que necesites sobre productos, horarios o citas."
   ],
   "descripcion": [
-    "{producto}: {descripcion}",
-    "Te cuento: {producto}: {descripcion}",
-    "Sobre {producto}: {descripcion}"
+    "{producto}, de la marca {marca}: {descripcion} Cuesta {precio}, IVA incluido.",
+    "El {producto} es de {marca}. {descripcion} Precio: {precio}, IVA incluido.",
+    "Te cuento del {producto} ({marca}): {descripcion} Está a {precio}, IVA incluido."
+  ],
+  "comparacion": [
+    "{descripcion}",
+    "Te los comparo: {descripcion}",
+    "Uno al lado del otro: {descripcion}"
+  ],
+  "lista_productos": [
+    "Sí, tenemos estos:\n{lista}\nTodos los precios llevan IVA incluido. Cuál te interesa?",
+    "Claro. Estas son las opciones:\n{lista}\nPrecios con IVA incluido. Cuál te gusta?",
+    "Tenemos {total} opciones. Las principales:\n{lista}\nIVA incluido. Cuál quieres?"
   ],
   "precio": [
     "{producto}: {precio}, IVA incluido.",
@@ -76,14 +90,14 @@
     "El precio de {producto} es {precio}, IVA incluido."
   ],
   "stock_hay": [
-    "Hay {stock} disponibles.",
-    "Tenemos {stock} en stock.",
-    "Quedan {stock} unidades."
+    "Sí, tenemos el {producto} de {marca} a {precio}, IVA incluido. Lo quieres?",
+    "Sí: {producto} ({marca}), {precio} con IVA incluido. Te reservo uno?",
+    "Sí, está disponible. {producto} de {marca}: {precio}, IVA incluido."
   ],
   "stock_pocas": [
-    "Quedan pocas unidades: {stock}.",
-    "Solo quedan {stock}, date prisa si lo quieres.",
-    "Aviso: quedan {stock} unidades."
+    "Sí, tenemos el {producto} a {precio}, IVA incluido, pero solo quedan {stock}.",
+    "Del {producto} ({marca}) quedan solo {stock}, a {precio} con IVA incluido.",
+    "{producto}: {precio}, IVA incluido. Aviso: quedan {stock} unidades."
   ],
   "stock_cero": [
     "Ahora mismo no hay stock de {producto}.",
