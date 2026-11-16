@@ -182,7 +182,13 @@ def _cabecera(negocio: Any, textos: dict[str, Any]) -> None:
         nuevo = "en" if idioma == "EN" else "es"
         if idioma and nuevo != st.session_state["idioma"]:
             st.session_state["idioma"] = nuevo
-            st.session_state["estado"].idioma = nuevo
+            estado = st.session_state["estado"]
+            estado.idioma = nuevo
+            # Si el cliente aún no escribió, el aviso de IA se vuelve a
+            # mostrar en el idioma elegido; si ya hay conversación, se respeta.
+            if not any(m["rol"] == "usuario" for m in st.session_state["mensajes"]):
+                st.session_state["mensajes"] = []
+                estado.aviso_ia_mostrado = False
             st.rerun()
 
 
@@ -268,15 +274,20 @@ def _panel(conn: Any, textos: dict[str, Any]) -> None:
             # El selector va fuera del formulario para que, al cambiar de
             # producto, el campo de precio se rellene con su precio actual.
             # Antes el campo salía vacío con un ejemplo gris y parecía lleno.
-            elegido = st.selectbox(textos["campo_producto"], opciones,
-                                   format_func=lambda o: o[1], key="sel_precio")
+            # Las opciones son ids y la etiqueta se calcula aparte: si la
+            # etiqueta (que lleva el precio) fuera la opción, al cambiar el
+            # precio Streamlit volvería al primer producto.
+            etiquetas = dict(opciones)
+            elegido = st.selectbox(textos["campo_producto"], list(etiquetas),
+                                   format_func=lambda i: etiquetas.get(i, ""),
+                                   key=f"sel_precio_{idioma}")
             if elegido is not None:
-                actual = precio_actual(conn, elegido[0], idioma)
-                with st.form(f"form_precio_{elegido[0]}", border=False):
+                actual = precio_actual(conn, elegido, idioma)
+                with st.form(f"form_precio_{elegido}", border=False):
                     nuevo = st.text_input(textos["campo_precio_nuevo"], value=actual,
                                           help=textos["ayuda_decimales"])
                     if st.form_submit_button(textos["boton_aplicar"], type="primary"):
-                        _aplicar(textos, lambda: cambiar_precio(conn, elegido[0], nuevo))
+                        _aplicar(textos, lambda: cambiar_precio(conn, elegido, nuevo))
 
         with producto:
             with st.form("form_producto", border=False, clear_on_submit=True):
