@@ -9,6 +9,7 @@ Registro de decisiones. Añadir una fila por decisión nueva o duda resuelta.
 | 2026-11-15 | Nombre del bot: Ana. Veterinarios: Marta, Pablo, Lucía | Evitar confusión de nombres | Cerrada |
 | 2026-11-15 | Tubería entender, reglas, redactar, validar | Que el dato siempre salga de la base | Cerrada |
 | 2026-11-15 | Dependencias fijas: streamlit 1.66.1, pandas 3.1.0, rapidfuzz 3.11.0; SDK de IA en fase 3 | Evitar sorpresas en despliegue; proveedor aún sin elegir | Cerrada |
+| 2026-11-16 | rapidfuzz 3.11.0 pasa a 3.14.6: la 3.11 no tiene rueda para Python 3.14 y el despliegue fallaba al compilar | Streamlit Cloud usa Python 3.14; la 3.14.6 trae rueda manylinux y pasa las 111 pruebas y las evals | Cerrada |
 | 2026-11-15 | CI en GitHub Actions con Python 3.12: pytest + mypy --strict core/ | Criterio de aceptación de la fase 0 | Cerrada |
 | 2026-11-15 | Columna negocio.nombre_bot añadida al esquema (la piden 04 y 05) | El esquema de 03 no la listaba pero los textos la necesitan | Cerrada |
 | 2026-11-15 | Ampliaciones mínimas: tipo compra_confirmada, tipo anulado y clave compra_confirmada en i18n; huecos_negocio para peluquería | Completan el flujo de compra, la cancelación y la peluquería sin veterinario que piden 04 y 05 | Cerrada |
