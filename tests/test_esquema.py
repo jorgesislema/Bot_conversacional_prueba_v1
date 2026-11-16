@@ -4,6 +4,7 @@ Comprueban los conteos de docs/04_DATOS_FICTICIOS.md y que el dinero
 va en céntimos enteros.
 """
 
+import threading
 from datetime import date
 
 from core.esquema import crear_conexion, crear_esquema, cargar_semilla, iniciar_bd
@@ -87,3 +88,21 @@ def test_cargar_semilla_dos_veces_falla() -> None:
         assert False, "Se esperaba un error de integridad"
     except Exception:
         pass
+
+
+def test_conexion_funciona_en_otro_hilo() -> None:
+    """La conexión se usa desde el hilo del rerun, distinto al que la creó."""
+    conn = iniciar_bd(date(2026, 11, 16))
+    errores: list[str] = []
+
+    def usar_desde_otro_hilo() -> None:
+        try:
+            fila = conn.execute("SELECT * FROM negocio").fetchone()
+            assert fila["nombre"] == "Mascota Feliz"
+        except Exception as error:  # noqa: BLE001
+            errores.append(str(error))
+
+    hilo = threading.Thread(target=usar_desde_otro_hilo)
+    hilo.start()
+    hilo.join()
+    assert errores == []
