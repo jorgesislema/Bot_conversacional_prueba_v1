@@ -15,7 +15,8 @@ Solo hay documentos. El código lo construye otra IA siguiendo `AGENTS.md`.
 6. `docs/05_CONTRATOS_Y_PROMPTS.md` (JSON, firmas, prompts, validador)
 7. `docs/06_DESPLIEGUE_STREAMLIT.md` (publicar y dar la URL)
 8. `docs/07_TEXTOS_I18N.md` (claves de texto ES y EN)
-9. `docs/DECISIONES.md` y `docs/ESTADO.md` (actualizar al terminar cada fase)
+9. `docs/08_MEJORAS_V2.md` (prioridad actual; manda sobre los anteriores)
+10. `docs/DECISIONES.md` y `docs/ESTADO.md` (actualizar al terminar cada fase)
 
 ## Cómo trabajar
 - Una fase por rama, empezando por la fase 0 de `docs/03_ARQUITECTURA_Y_PLAN.md`.
