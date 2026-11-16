@@ -216,6 +216,43 @@ def cambiar_horario(
                   f"What time do you open on {dia_en}?")
 
 
+def cambiar_direccion(conn: sqlite3.Connection, direccion: str, enlace: str = "") -> Cambio:
+    """Cambia la dirección del negocio y, si se da, su enlace de Google Maps.
+
+    Parámetros:
+        conn: conexión SQLite de la sesión.
+        direccion: dirección escrita (5 a 150 caracteres).
+        enlace: enlace https opcional; vacío para crearlo con la dirección.
+    Devuelve: el cambio con la pregunta sugerida.
+    Errores:
+        ValueError("error_direccion") si la dirección no es válida.
+        ValueError("error_enlace") si el enlace no empieza por https://.
+    Ejemplo:
+        >>> cambiar_direccion(conn, "Gran Vía 20, Madrid").resumen  # doctest: +SKIP
+        'Dirección: Gran Vía 20, Madrid'
+    """
+    limpia = " ".join(direccion.split())
+    if not 5 <= len(limpia) <= 150:
+        raise ValueError("error_direccion")
+    enlace_limpio = enlace.strip()
+    # Solo https y sin espacios ni comillas: el enlace se muestra pulsable.
+    if enlace_limpio and (not enlace_limpio.startswith("https://")
+                          or any(c in enlace_limpio for c in " \"'<>")):
+        raise ValueError("error_enlace")
+    resumen = f"Dirección: {limpia}"
+    with conn:
+        conn.execute("UPDATE negocio SET direccion = ?, enlace_mapa = ? WHERE id = 1",
+                     (limpia, enlace_limpio))
+        _registrar(conn, resumen)
+    return Cambio(resumen, "Dónde están?", "Where are you located?")
+
+
+def datos_ubicacion(conn: sqlite3.Connection) -> tuple[str, str]:
+    """Devuelve (dirección, enlace guardado) del negocio para el formulario."""
+    fila = conn.execute("SELECT direccion, enlace_mapa FROM negocio WHERE id = 1").fetchone()
+    return str(fila["direccion"]), str(fila["enlace_mapa"])
+
+
 def ultimos_cambios(conn: sqlite3.Connection, limite: int = 5) -> list[str]:
     """Devuelve los últimos cambios del panel, del más nuevo al más viejo.
 

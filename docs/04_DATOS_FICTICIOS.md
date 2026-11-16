@@ -12,6 +12,8 @@ Dinero en céntimos enteros, IVA incluido. Zona horaria Europe/Madrid. Días de 
 | correo | contacto@mascotafeliz.example |
 | trato_por_defecto | tu |
 | idioma_por_defecto | es |
+| direccion | Plaza Mayor 1, 28012 Madrid (plaza pública, no señala a ningún negocio real) |
+| enlace_mapa | vacío: el enlace de Google Maps se crea con la dirección |
 
 ## Veterinarios (ninguno se llama Ana)
 | id | nombre | especialidad |

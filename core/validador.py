@@ -15,6 +15,7 @@ _PATRON_NUMERO = re.compile(r"\d+[,.]\d+|\d{1,2}:\d{2}|\b\d+\b")
 _PATRON_PRECIO = re.compile(r"\d+[,.]\d{2}")
 _PATRON_HORA = re.compile(r"\d{1,2}:\d{2}")
 _PATRON_CORREO = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
+_PATRON_ENLACE = re.compile(r"https?://\S+")
 # El salto de línea también separa frases: en una lista cada línea empieza
 # con mayúscula sin que eso sea un nombre propio.
 _PATRON_FRASE = re.compile(r"[.!?\n]+")
@@ -58,6 +59,12 @@ def validar(
     permitido = " | ".join(str(p) for p in hechos.get("permitido_mencionar", []))
     permitido_norm = _normalizar_numero(permitido.lower())
     datos = hechos.get("datos", {})
+    # Un enlace solo vale si está tal cual en los hechos; luego se quita del
+    # texto para que sus números y puntos no cuenten como datos o frases.
+    for enlace in _PATRON_ENLACE.findall(texto):
+        if enlace.rstrip(".,)") not in permitido:
+            motivos.append("enlace_no_permitido")
+    texto = _PATRON_ENLACE.sub("enlace", texto)
 
     for match in _PATRON_NUMERO.finditer(texto):
         token = _normalizar_numero(match.group(0))

@@ -44,6 +44,7 @@ EN: "Good morning", "Good afternoon", "Good evening".
 | no_entendido | No te he entendido bien. Puedes decirlo de otra forma? |
 | despedida | Gracias por escribirnos. Que vaya muy bien. |
 | gracias | De nada. Algo más en lo que te pueda ayudar? |
+| ubicacion | Estamos en {direccion}. Aquí tienes el mapa: {enlace} |
 
 ### Interfaz
 | clave | texto ES |

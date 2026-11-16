@@ -80,6 +80,7 @@ html, body, .stApp {{ font-family: 'Inter', 'Segoe UI', system-ui, -apple-system
   box-shadow: 0 1px 1px rgba(0,0,0,.08); word-wrap: break-word;
 }}
 .mf-bot {{ background: #FFFFFF; align-self: flex-start; border-top-left-radius: 3px; }}
+.mf-bot a {{ color: {MARCA}; font-weight: 600; word-break: break-all; }}
 .mf-cliente {{ background: {MARCA_SUAVE}; align-self: flex-end; border-top-right-radius: 3px; }}
 .mf-hora {{ display: block; text-align: right; font-size: .68rem; color: {GRIS}; margin-top: 2px; }}
 .mf-fecha {{

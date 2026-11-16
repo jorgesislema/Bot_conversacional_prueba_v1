@@ -12,7 +12,31 @@ nunca inserta HTML escrito por el usuario sin escapar.
 from __future__ import annotations
 
 import html
+import re
 from typing import Any
+
+# Enlaces https ya escapados. Se excluyen comillas y "<" para que el
+# enlace no pueda salirse del atributo href.
+_PATRON_ENLACE = re.compile(r"https://[^\s<>\"']+")
+
+
+def _enlazar(texto_escapado: str) -> str:
+    """Convierte en enlace pulsable cada https:// de un texto ya escapado.
+
+    Solo se usa con mensajes del bot, que salen de la base de datos.
+    El texto del cliente nunca se convierte en enlace.
+
+    Ejemplo:
+        >>> 'target="_blank"' in _enlazar("Mapa: https://www.google.com/maps")
+        True
+    """
+    def reemplazo(coincidencia: re.Match[str]) -> str:
+        enlace = coincidencia.group(0).rstrip(".,)")
+        resto = coincidencia.group(0)[len(enlace):]
+        return (f'<a href="{enlace}" target="_blank" rel="noopener noreferrer">'
+                f"{enlace}</a>{resto}")
+
+    return _PATRON_ENLACE.sub(reemplazo, texto_escapado)
 
 
 def _texto_seguro(texto: str) -> str:
@@ -64,12 +88,13 @@ def html_conversacion(mensajes: list[dict[str, Any]], etiqueta_fecha: str) -> st
     partes = ['<div class="mf-tel-chat"><div class="mf-tel-lista">',
               f'<div class="mf-fecha">{html.escape(etiqueta_fecha)}</div>']
     for mensaje in mensajes:
-        clase = "mf-cliente" if mensaje.get("rol") == "usuario" else "mf-bot"
+        es_cliente = mensaje.get("rol") == "usuario"
+        clase = "mf-cliente" if es_cliente else "mf-bot"
         hora = html.escape(str(mensaje.get("hora", "")))
         pie = f'<span class="mf-hora">{hora}</span>' if hora else ""
-        partes.append(
-            f'<div class="mf-burbuja {clase}">'
-            f'{_texto_seguro(str(mensaje.get("texto", "")))}{pie}</div>'
-        )
+        cuerpo = _texto_seguro(str(mensaje.get("texto", "")))
+        if not es_cliente:
+            cuerpo = _enlazar(cuerpo)
+        partes.append(f'<div class="mf-burbuja {clase}">{cuerpo}{pie}</div>')
     partes.append("</div></div>")
     return "".join(partes)

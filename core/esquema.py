@@ -163,10 +163,13 @@ def cargar_semilla(conn: sqlite3.Connection, hoy: date | None = None) -> None:
     with conn:
         conn.execute(
             "INSERT INTO negocio (id, nombre, nombre_bot, telefono, correo,"
-            " trato_por_defecto, idioma_por_defecto)"
-            " VALUES (1, ?, ?, ?, ?, ?, ?)",
+            " trato_por_defecto, idioma_por_defecto, direccion)"
+            " VALUES (1, ?, ?, ?, ?, ?, ?, ?)",
+            # Dirección de ejemplo en una plaza pública: el enlace abre un
+            # lugar real sin señalar a ningún negocio real.
             ("Mascota Feliz", "Ana", "900 000 000",
-             "contacto@mascotafeliz.example", "tu", "es"),
+             "contacto@mascotafeliz.example", "tu", "es",
+             "Plaza Mayor 1, 28012 Madrid"),
         )
         conn.executemany(
             "INSERT INTO productos (sku, nombre_es, nombre_en, categoria, marca,"

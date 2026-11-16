@@ -21,3 +21,4 @@ Registro de decisiones. Añadir una fila por decisión nueva o duda resuelta.
 | Pendiente | Claves del proveedor de IA principal y de respaldo | Elegir con los criterios de 06.6 y pegarlas en secretos | Abierta |
 | Pendiente | Titular legal y correo que aparecen en el pie | Los define el dueño del proyecto | Abierta |
 | Pendiente | Revisión de un abogado | Antes de ofrecerlo a clientes reales | Abierta |
+| 2026-11-16 | Dirección con enlace de Google Maps (intención ubicacion), respuesta fija sin IA, solo enlaces https y pulsables solo en mensajes del bot. Sin mapa incrustado | Un mapa incrustado carga recursos de terceros y exige aviso de cookies; el enlace no. La IA no puede alterar el enlace | Cerrada |

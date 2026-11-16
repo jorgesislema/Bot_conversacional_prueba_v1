@@ -178,6 +178,18 @@
     "De nada, para eso estoy. Necesitas algo más?",
     "Un placer. Te ayudo en algo más?"
   ],
+  "ubicacion": [
+    "Estamos en {direccion}. Aquí tienes el mapa: {enlace}",
+    "Nos encuentras en {direccion}. Te dejo la ubicación: {enlace}",
+    "La dirección es {direccion}. Para llegar, abre este mapa: {enlace}"
+  ],
+  "pestana_ubicacion": "Ubicación",
+  "campo_direccion": "Dirección",
+  "campo_enlace_mapa": "Enlace de Google Maps (opcional)",
+  "ayuda_enlace_mapa": "Si lo dejas vacío, el enlace se crea solo con la dirección.",
+  "boton_guardar_direccion": "Guardar dirección",
+  "error_direccion": "La dirección debe tener entre 5 y 150 caracteres.",
+  "error_enlace": "El enlace debe empezar por https://",
   "datos_personales": [
     "Prefiero que no compartas datos personales por aquí. Puedo ayudarte sin ellos.",
     "Mejor no compartas datos personales en el chat. Dime qué necesitas sin ellos.",

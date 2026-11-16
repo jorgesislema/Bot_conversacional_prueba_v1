@@ -179,6 +179,18 @@
     "You are welcome, that is what I am here for. Need anything else?",
     "My pleasure. Can I help with anything else?"
   ],
+  "ubicacion": [
+    "We are at {direccion}. Here is the map: {enlace}",
+    "You can find us at {direccion}. Here is the location: {enlace}",
+    "Our address is {direccion}. To get here, open this map: {enlace}"
+  ],
+  "pestana_ubicacion": "Location",
+  "campo_direccion": "Address",
+  "campo_enlace_mapa": "Google Maps link (optional)",
+  "ayuda_enlace_mapa": "Leave it empty and the link is built from the address.",
+  "boton_guardar_direccion": "Save address",
+  "error_direccion": "The address must be 5 to 150 characters long.",
+  "error_enlace": "The link must start with https://",
   "datos_personales": [
     "Please do not share personal data here. I can help you without it.",
     "Better not to share personal data in the chat. Tell me what you need without it.",

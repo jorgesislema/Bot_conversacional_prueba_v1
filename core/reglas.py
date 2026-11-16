@@ -13,6 +13,7 @@ import sqlite3
 import unicodedata
 from datetime import date, datetime, timedelta
 from typing import Any
+from urllib.parse import quote_plus
 from zoneinfo import ZoneInfo
 
 from rapidfuzz import fuzz
@@ -267,6 +268,23 @@ def buscar_veterinario(conn: sqlite3.Connection, texto: str) -> dict[str, Any] |
     return mejor
 
 
+def enlace_mapa(direccion: str, enlace_guardado: str = "") -> str:
+    """Devuelve el enlace de Google Maps del negocio.
+
+    Usa el enlace guardado si es https; si no, arma uno de búsqueda con la
+    dirección (formato público "Maps URLs" de Google, sin clave ni coste).
+    Por qué solo https: un enlace "javascript:" en el chat sería un riesgo.
+
+    Ejemplo:
+        >>> enlace_mapa("Plaza Mayor 1, 28012 Madrid")
+        'https://www.google.com/maps/search/?api=1&query=Plaza+Mayor+1%2C+28012+Madrid'
+    """
+    guardado = enlace_guardado.strip()
+    if guardado.startswith("https://"):
+        return guardado
+    return "https://www.google.com/maps/search/?api=1&query=" + quote_plus(direccion)
+
+
 def formatear_precio(centimos: int, idioma: str) -> str:
     """Formatea céntimos a "49,90 EUR" en ES y "49.90 EUR" en EN."""
     euros, resto = divmod(int(centimos), 100)
@@ -361,6 +379,14 @@ def resolver(
         negocio = _fila_a_dict(conn.execute("SELECT * FROM negocio").fetchone())
         datos = {"telefono": str(negocio["telefono"]), "correo": str(negocio["correo"])}
         return _hechos("derivar", estado, datos, permitido=list(datos.values()))
+    if intencion == "ubicacion":
+        negocio = _fila_a_dict(conn.execute("SELECT * FROM negocio").fetchone())
+        direccion = str(negocio.get("direccion", "")).strip()
+        if not direccion:
+            return _hechos("no_se", estado)
+        enlace = enlace_mapa(direccion, str(negocio.get("enlace_mapa", "")))
+        datos = {"direccion": direccion, "enlace": enlace}
+        return _hechos("ubicacion", estado, datos, permitido=[direccion, enlace])
     if intencion == "es_ia":
         negocio = _fila_a_dict(conn.execute("SELECT * FROM negocio").fetchone())
         nombre = str(negocio["nombre"])

@@ -20,7 +20,7 @@ INTENCIONES = (
     "precio_producto", "descripcion_producto", "disponibilidad",
     "comparar_productos", "horario_negocio", "horario_veterinario",
     "pedir_cita", "consultar_servicio", "confirmar", "rechazar",
-    "hablar_con_persona", "es_ia", "saludo", "despedida", "gracias",
+    "hablar_con_persona", "es_ia", "ubicacion", "saludo", "despedida", "gracias",
     "urgencia_clinica", "fuera_de_alcance", "no_entendido",
 )
 REFERENCIAS = ("ninguna", "ese", "el_primero", "el_segundo",
@@ -56,6 +56,8 @@ PLANTILLA_ENTENDER = (
     "- horario_veterinario o pedir_cita: si nombra a un veterinario, ponlo"
     " en veterinario_texto aunque no exista.\n"
     "- Si hay saludo y pregunta en el mismo mensaje, clasifica la pregunta.\n"
+    "- ubicacion: dónde están, la dirección, cómo llegar, el mapa"
+    " (\"where are you\", \"address\").\n"
     "- Preguntas por la marca, el tamaño, el sabor, los ingredientes o para"
     " qué animal es (\"que marca\", \"es para gato?\"): descripcion_producto."
     " Si no nombra el producto, deja producto_texto vacío: se usa el"

@@ -9,7 +9,11 @@ CREATE TABLE IF NOT EXISTS negocio (
     telefono TEXT NOT NULL,
     correo TEXT NOT NULL,
     trato_por_defecto TEXT NOT NULL CHECK (trato_por_defecto IN ('tu', 'usted')),
-    idioma_por_defecto TEXT NOT NULL CHECK (idioma_por_defecto IN ('es', 'en'))
+    idioma_por_defecto TEXT NOT NULL CHECK (idioma_por_defecto IN ('es', 'en')),
+    -- Dirección para "dónde están". Si enlace_mapa está vacío, el enlace de
+    -- Google Maps se arma con la dirección. Solo se aceptan enlaces https.
+    direccion TEXT NOT NULL DEFAULT '',
+    enlace_mapa TEXT NOT NULL DEFAULT '' CHECK (enlace_mapa = '' OR enlace_mapa LIKE 'https://%')
 );
 
 CREATE TABLE IF NOT EXISTS productos (

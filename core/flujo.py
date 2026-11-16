@@ -33,7 +33,8 @@ from core.validador import validar
 _registro = logging.getLogger(__name__)
 
 # Respuestas que salen fijas sin pasar por la IA (ver 05, reglas 10 a 12).
-SIN_IA = ("aviso_ia", "derivar")
+# La ubicación también va fija: así la IA nunca puede alterar el enlace.
+SIN_IA = ("aviso_ia", "derivar", "ubicacion")
 
 
 @dataclass

@@ -30,8 +30,10 @@ from ui.acciones import (
     DIAS_ES,
     Cambio,
     anadir_producto,
+    cambiar_direccion,
     cambiar_horario,
     cambiar_precio,
+    datos_ubicacion,
     horario_de,
     precio_actual,
     productos_para_selector,
@@ -265,9 +267,19 @@ def _panel(conn: Any, textos: dict[str, Any]) -> None:
                     st.session_state["pendiente"] = cambio.pregunta(idioma)
                     st.session_state["ultimo_cambio"] = None
 
-        precio, producto, horario, datos = st.tabs([
+        precio, producto, horario, ubicacion, datos = st.tabs([
             textos["pestana_precio"], textos["pestana_producto"],
-            textos["pestana_horario"], textos["pestana_datos"]])
+            textos["pestana_horario"], textos["pestana_ubicacion"],
+            textos["pestana_datos"]])
+
+        with ubicacion:
+            direccion_actual, enlace_actual = datos_ubicacion(conn)
+            with st.form("form_ubicacion", border=False):
+                direccion = st.text_input(textos["campo_direccion"], value=direccion_actual)
+                enlace = st.text_input(textos["campo_enlace_mapa"], value=enlace_actual,
+                                       help=textos["ayuda_enlace_mapa"])
+                if st.form_submit_button(textos["boton_guardar_direccion"], type="primary"):
+                    _aplicar(textos, lambda: cambiar_direccion(conn, direccion, enlace))
 
         with precio:
             opciones = productos_para_selector(conn, idioma)
