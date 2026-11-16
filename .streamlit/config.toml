@@ -1,0 +1,11 @@
+[theme]
+# Tema claro para la demo pública.
+base = "light"
+
+[browser]
+# Sin estadísticas de uso: la demo no usa cookies de seguimiento.
+gatherUsageStats = false
+
+[client]
+# Barra de herramientas mínima para que el cliente vea solo la demo.
+toolbarMode = "minimal"
