@@ -127,7 +127,10 @@ def crear_conexion() -> sqlite3.Connection:
         >>> conn.execute("SELECT 1").fetchone()[0]
         1
     """
-    conn = sqlite3.connect(":memory:")
+    # check_same_thread=False: Streamlit ejecuta cada rerun en un hilo
+    # distinto y la conexión vive en la sesión. El acceso sigue siendo
+    # secuencial porque una sesión no se ejecuta en paralelo consigo misma.
+    conn = sqlite3.connect(":memory:", check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
