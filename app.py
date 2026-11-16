@@ -33,6 +33,7 @@ from ui.acciones import (
     cambiar_horario,
     cambiar_precio,
     horario_de,
+    precio_actual,
     productos_para_selector,
     ultimos_cambios,
 )
@@ -264,20 +265,28 @@ def _panel(conn: Any, textos: dict[str, Any]) -> None:
 
         with precio:
             opciones = productos_para_selector(conn, idioma)
-            with st.form("form_precio", border=False):
-                elegido = st.selectbox(textos["campo_producto"], opciones,
-                                       format_func=lambda o: o[1])
-                nuevo = st.text_input(textos["campo_precio_nuevo"], placeholder="44,90")
-                if st.form_submit_button(textos["boton_aplicar"], type="primary"):
-                    _aplicar(textos, lambda: cambiar_precio(conn, elegido[0], nuevo))
+            # El selector va fuera del formulario para que, al cambiar de
+            # producto, el campo de precio se rellene con su precio actual.
+            # Antes el campo salía vacío con un ejemplo gris y parecía lleno.
+            elegido = st.selectbox(textos["campo_producto"], opciones,
+                                   format_func=lambda o: o[1], key="sel_precio")
+            if elegido is not None:
+                actual = precio_actual(conn, elegido[0], idioma)
+                with st.form(f"form_precio_{elegido[0]}", border=False):
+                    nuevo = st.text_input(textos["campo_precio_nuevo"], value=actual,
+                                          help=textos["ayuda_decimales"])
+                    if st.form_submit_button(textos["boton_aplicar"], type="primary"):
+                        _aplicar(textos, lambda: cambiar_precio(conn, elegido[0], nuevo))
 
         with producto:
             with st.form("form_producto", border=False, clear_on_submit=True):
                 nombre = st.text_input(textos["campo_nombre"],
-                                       placeholder="Snack dental para gatos")
+                                       placeholder=textos["ejemplo_nombre"])
                 columnas = st.columns(3)
                 categoria = columnas[0].selectbox(textos["campo_categoria"], CATEGORIAS)
-                euros = columnas[1].text_input(textos["campo_precio"], placeholder="6,20")
+                euros = columnas[1].text_input(textos["campo_precio"],
+                                               placeholder=textos["ejemplo_precio"],
+                                               help=textos["ayuda_decimales"])
                 stock = columnas[2].number_input(textos["campo_stock"], min_value=0,
                                                  value=20, step=1)
                 descripcion = st.text_input(textos["campo_descripcion"])
@@ -301,6 +310,7 @@ def _panel(conn: Any, textos: dict[str, Any]) -> None:
                         conn, dia, apertura.strip(), cierre.strip(), cerrado))
 
         with datos:
+            st.caption(textos["ayuda_datos"])
             _editor(conn, textos, "productos",
                     ("nombre_es", "nombre_en", "descripcion_es",
                      "descripcion_en", "precio_eur", "stock", "activo"))
@@ -335,9 +345,15 @@ def _editor(conn: Any, textos: dict[str, Any], tabla: str,
     ocultas = [c for c in COLUMNAS_OCULTAS if c in original.columns and c != "id"]
     vista = original.drop(columns=ocultas)
     bloqueadas = [c for c in vista.columns if c not in editables]
+    # Precio con dos decimales y paso de 0,01: antes la columna se trataba
+    # como número sin formato y costaba escribir céntimos.
+    configuracion: dict[str, Any] = {"id": None}
+    if "precio_eur" in vista.columns:
+        configuracion["precio_eur"] = st.column_config.NumberColumn(
+            "EUR", min_value=0.0, step=0.01, format="%.2f")
     editado = st.data_editor(vista, num_rows="fixed", disabled=bloqueadas,
                              key=f"editor_{tabla}", hide_index=True,
-                             column_config={"id": None})
+                             column_config=configuracion)
     if st.button(textos["guardar"], key=f"guardar_{tabla}"):
         try:
             guardar_tabla(conn, tabla, original, editado, editables)

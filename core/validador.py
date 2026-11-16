@@ -15,7 +15,9 @@ _PATRON_NUMERO = re.compile(r"\d+[,.]\d+|\d{1,2}:\d{2}|\b\d+\b")
 _PATRON_PRECIO = re.compile(r"\d+[,.]\d{2}")
 _PATRON_HORA = re.compile(r"\d{1,2}:\d{2}")
 _PATRON_CORREO = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
-_PATRON_FRASE = re.compile(r"[.!?]+")
+# El salto de línea también separa frases: en una lista cada línea empieza
+# con mayúscula sin que eso sea un nombre propio.
+_PATRON_FRASE = re.compile(r"[.!?\n]+")
 _PATRON_PALABRA = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
 
 # Mayúsculas de cortesía o inicio de pregunta que no son nombres propios.

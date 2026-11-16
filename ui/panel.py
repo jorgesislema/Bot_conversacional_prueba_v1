@@ -29,9 +29,17 @@ def euros_a_centimos(texto: str) -> int:
         4990
     """
     try:
-        valor = float(texto.strip().replace(",", "."))
+        # Se aceptan las formas habituales de escribir un precio: "12,5",
+        # "12.50", "12,50 €", "12 EUR" y "1.234,50" (punto de miles).
+        limpio = str(texto).strip().lower().replace("€", "").replace("eur", "")
+        limpio = limpio.replace(" ", "")
+        if "," in limpio and "." in limpio:
+            limpio = limpio.replace(".", "")
+        valor = float(limpio.replace(",", "."))
     except (ValueError, AttributeError):
         raise ValueError("error_precio") from None
+    if valor != valor or valor in (float("inf"), float("-inf")):
+        raise ValueError("error_precio")  # Rechaza "nan" e infinito.
     if valor < 0:
         raise ValueError("error_precio")
     return int(round(valor * 100))
